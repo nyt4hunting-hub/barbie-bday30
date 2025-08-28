@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 19th Birthday Barbie</title>
+<style>
+  body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    color: #222;
+    text-align: center;
+    overflow-x:hidden;
+  }
+  header {padding:20px;font-size:24px;font-weight:bold;}
+  section {display:none;min-height:70vh;padding:20px;}
+  section.active {display:block;}
+  button {
+    padding:12px 20px;
+    margin:10px;
+    border:none;
+    border-radius:8px;
+    background:#ff6f91;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+  }
+  .cake {
+    margin:30px auto;
+    width:200px;
+    height:150px;
+    background:#fff3cd;
+    border-radius:10px;
+    position:relative;
+  }
+  .candle {
+    width:10px;
+    height:40px;
+    background:orange;
+    margin:0 auto;
+    position:relative;
+    top:-40px;
+    border-radius:3px;
+  }
+  .flame {
+    width:20px;
+    height:20px;
+    background:radial-gradient(circle, yellow 40%, transparent 70%);
+    border-radius:50%;
+    position:absolute;
+    top:-20px; left:-5px;
+    animation:flicker 1s infinite;
+  }
+  @keyframes flicker {
+    0%{transform:scale(1);}
+    50%{transform:scale(1.2);}
+    100%{transform:scale(1);}
+  }
+</style>
+</head>
+<body>
+<header>🎉 Happy 19th Birthday, Barbie 🎉</header>
+
+<!-- Navigation -->
+<div>
+  <button onclick="showPage(0)">Intro</button>
+  <button onclick="showPage(1)">Questions</button>
+  <button onclick="showPage(2)">Cake</button>
+</div>
+
+<!-- Pages -->
+<section id="page0" class="active">
+  <h2>Welcome Barbie!</h2>
+  <p>Tap the button below to start your birthday surprise with music 🎶</p>
+  <button onclick="startSurprise()">Start Surprise</button>
+</section>
+
+<section id="page1">
+  <h2>Some Questions for You</h2>
+  <p>1. What is our funniest memory? 🤔</p>
+  <p>2. What song reminds you of me? 🎵</p>
+  <p>3. If you could describe me in one word, what would it be? 💭</p>
+</section>
+
+<section id="page2">
+  <h2>Time to cut the cake 🎂</h2>
+  <div class="cake">
+    <div class="candle"><div class="flame"></div></div>
+  </div>
+  <button onclick="playClap()">Clap 👏</button>
+  <button onclick="playPop()">Pop Balloons 🎈</button>
+  <button onclick="playCut()">Cut Cake 🍰</button>
+</section>
+
+<!-- Audio -->
+<audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2023/01/16/audio_2d98a5f0e2.mp3?filename=happy-birthday-113164.mp3"></audio>
+<audio id="clap" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_056b62a1f8.mp3?filename=clapping-crowd-1-6292.mp3"></audio>
+<audio id="pop" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0b8a06279a.mp3?filename=balloon-pop-96999.mp3"></audio>
+<audio id="cut" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b0df2f1c5.mp3?filename=knife-slice-97956.mp3"></audio>
+
+<script>
+function showPage(n){
+  document.querySelectorAll("section").forEach((s,i)=>{
+    s.classList.toggle("active", i===n);
+  });
+}
+function startSurprise(){
+  document.getElementById("bgMusic").play();
+  alert("Surprise started! Navigate to the other pages.");
+}
+function playClap(){document.getElementById("clap").play();}
+function playPop(){document.getElementById("pop").play();}
+function playCut(){document.getElementById("cut").play();}
+</script>
+</body>
+</html>
