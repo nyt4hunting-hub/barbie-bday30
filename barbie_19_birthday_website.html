@@ -1,0 +1,298 @@
+<!--
+Barbie's 19th Birthday — Single-file interactive website
+INSTRUCTIONS:
+1) This is a single-file HTML site (index.html). Save this exact content as index.html.
+2) Replace the placeholder audio URLs near the top of the <body> if you want custom sounds. (Search for AUDIO URL placeholders.)
+3) Host on GitHub Pages / Netlify / Vercel (simple steps below). Then copy the live URL and shorten with bit.ly or tinyurl to share on WhatsApp.
+4) Autoplay is blocked on many mobiles — the site starts with an attractive "Start" button that the birthday person must tap to enable audio.
+
+Enjoy! — I built 8 pages (sections) asking friendly questions about your friendship, with an aesthetic gradient, animations, lots of clapping, balloon-burst, cake cutting moment, confetti, and background music.
+--> 
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy 19th Birthday, Barbie 🎉</title>
+  <style>
+    /* -- Simple reset -- */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ff9a9e 0%,#fad0c4 50%,#fad0ec 100%);color:#111}
+    .app{width:100%;max-width:980px;height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:24px}
+    header{display:flex;gap:12px;align-items:center}
+    .logo{font-weight:800;font-size:20px;letter-spacing:1px}
+    .subtitle{opacity:.85}
+    main{background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));backdrop-filter:blur(6px);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(16,24,40,0.12);overflow:hidden;position:relative}
+    nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .btn{background:linear-gradient(90deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));border:1px solid rgba(255,255,255,0.12);padding:8px 12px;border-radius:12px;cursor:pointer}
+    .btn-primary{background:linear-gradient(90deg,#fff5 30%,#ffffff06);font-weight:700}
+    .page{display:none;height:calc(100% - 88px);overflow:auto;padding:12px;border-radius:12px}
+    .page.active{display:block}
+    .card{background:linear-gradient(180deg,#ffffff11,#ffffff06);border-radius:14px;padding:18px;margin:12px 0;box-shadow:0 6px 20px rgba(16,24,40,0.06)}
+    h1{font-size:28px;margin-bottom:8px}
+    p.lead{font-size:16px;opacity:.95}
+    .questions{display:grid;gap:12px;grid-template-columns:1fr}
+    .q{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.02));display:flex;align-items:center;justify-content:space-between}
+    .q small{opacity:.85}
+    footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px}
+
+    /* decorative balloons */
+    .balloons{position:absolute;inset:0;pointer-events:none}
+    .balloon{position:absolute;width:90px;height:120px;border-radius:48% 52% 45% 55%;transform-origin:center bottom;background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.6), rgba(255,255,255,0.02));animation:float 6s ease-in-out infinite}
+    .balloon::after{content:'';position:absolute;left:50%;bottom:-20px;width:2px;height:40px;background:rgba(255,255,255,0.25);transform:translateX(-50%)}
+    @keyframes float{0%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-18px) rotate(2deg)}100%{transform:translateY(0) rotate(-4deg)}}
+
+    /* confetti */
+    .confetti{position:absolute;inset:0;pointer-events:none}
+
+    /* cake */
+    .cake{width:220px;margin:18px auto}
+    .cake .tier{height:48px;border-radius:12px;margin-bottom:6px;background:linear-gradient(90deg,#fff8,#fff0);box-shadow:inset 0 2px 8px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center}
+    .candle{width:8px;height:36px;background:linear-gradient(180deg,#ff9,#f60);border-radius:3px;position:relative}
+    .flame{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#fff2,#ff9a00 40%,#ff4200)}
+
+    /* responsive */
+    @media (max-width:600px){.cake{width:160px}.logo{font-size:18px}h1{font-size:20px}}
+
+    /* aesthetic gradient border */
+    .glow{padding:2px;border-radius:16px;background:linear-gradient(90deg,#ffd3e0,#ffb3c6,#ffd5a6);}
+  </style>
+</head>
+<body>
+  <!-- Audio files - REPLACE these URLs with your own hosted MP3/OGG files for best results -->
+  <audio id="bg-music" loop src="https://example.com/birthday-music.mp3"></audio>
+  <audio id="clap-a" src="https://example.com/clap1.mp3"></audio>
+  <audio id="clap-b" src="https://example.com/clap2.mp3"></audio>
+  <audio id="balloon-pop" src="https://example.com/balloon-pop.mp3"></audio>
+  <audio id="cake-cut" src="https://example.com/cake-cut.mp3"></audio>
+
+  <div class="app">
+    <header>
+      <div class="logo">Barbie — 19</div>
+      <div class="subtitle">An interactive love-note from your bestie 💖</div>
+    </header>
+
+    <main>
+      <div class="glow">
+        <nav style="padding:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-primary" id="startBtn">Start the Surprise</button>
+          <button class="btn" data-page="0">Intro</button>
+          <button class="btn" data-page="1">Memories</button>
+          <button class="btn" data-page="2">Silly</button>
+          <button class="btn" data-page="3">Favorites</button>
+          <button class="btn" data-page="4">Inside Jokes</button>
+          <button class="btn" data-page="5">Dreams</button>
+          <button class="btn" data-page="6">Rapid Fire</button>
+          <button class="btn" data-page="7">Surprise</button>
+        </nav>
+      </div>
+
+      <section class="page active" data-page="0">
+        <div class="card">
+          <h1>Happy 19th — Barbie 🎂</h1>
+          <p class="lead">Tap "Start the Surprise" to begin. Each page asks a playful question about our friendship — it's a mini journey. At the end: balloons pop, people clap, and we cut the cake. 💫</p>
+        </div>
+
+        <div class="card">
+          <h2>How to use</h2>
+          <ol>
+            <li>Tap <strong>Start the Surprise</strong>. This enables audio and starts background music.</li>
+            <li>Click through the pages or answer the questions.</li>
+            <li>On the final Surprise page, press <em>Pop & Cut</em> for the full show.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Page template repeated for multiple pages -->
+      <section class="page" data-page="1">
+        <div class="card">
+          <h2>Memory Lane</h2>
+          <p class="lead">What's our favorite memory together?</p>
+          <div class="questions">
+            <div class="q"><span>1. That time we laughed till we cried at...</span><small id="a1">(type your answer)</small></div>
+            <div class="q"><span>2. Our first inside joke?</span><small id="a2">(type your answer)</small></div>
+            <div style="display:flex;gap:8px;margin-top:8px"><input id="mem1" placeholder="Answer 1" style="flex:1;padding:8px;border-radius:8px;border:1px solid #fff5"/><button class="btn" id="saveMem">Save</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" data-page="2">
+        <div class="card">
+          <h2>Silly Questions</h2>
+          <p class="lead">Pick the funniest answer about me:</p>
+          <div class="questions">
+            <div class="q">If I were a snack, I'd be... <small id="a3">(choose)</small></div>
+            <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" data-val="Choco">Choco</button><button class="btn" data-val="Biscuit">Biscuit</button><button class="btn" data-val="Icecream">Icecream</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" data-page="3">
+        <div class="card">
+          <h2>Favorites</h2>
+          <p class="lead">A quick quiz about my favs — answer them for a custom message.</p>
+          <div class="questions">
+            <div class="q">Favorite color? <small id="favColor">(type)</small></div>
+            <div class="q">Favorite song? <small id="favSong">(type)</small></div>
+            <div style="display:flex;gap:8px;margin-top:8px"><input id="favc" placeholder="Color" style="flex:1;padding:8px;border-radius:8px;border:1px solid #fff5"/><input id="favs" placeholder="Song" style="flex:1;padding:8px;border-radius:8px;border:1px solid #fff5"/><button class="btn" id="saveFavs">Save</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" data-page="4">
+        <div class="card">
+          <h2>Inside Jokes</h2>
+          <p class="lead">Remind me of a silly nickname or moment — I'll use it in the final message.</p>
+          <div style="display:flex;gap:8px;margin-top:8px"><input id="jokeInput" placeholder="Nickname or moment" style="flex:1;padding:8px;border-radius:8px;border:1px solid #fff5"/><button class="btn" id="saveJoke">Save</button></div>
+        </div>
+      </section>
+
+      <section class="page" data-page="5">
+        <div class="card">
+          <h2>Dreams & Wishes</h2>
+          <p class="lead">What's one thing you hope I'll do this year?</p>
+          <div style="display:flex;gap:8px;margin-top:8px"><input id="dream" placeholder="Dream for me" style="flex:1;padding:8px;border-radius:8px;border:1px solid #fff5"/><button class="btn" id="saveDream">Save</button></div>
+        </div>
+      </section>
+
+      <section class="page" data-page="6">
+        <div class="card">
+          <h2>Rapid Fire</h2>
+          <p class="lead">Quick! Choose fast — you'll see these answers in the surprise.</p>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn" data-rf="Forever">Forever</button><button class="btn" data-rf="Bestie">Bestie</button><button class="btn" data-rf="Partner-in-crime">Partner-in-crime</button></div>
+        </div>
+      </section>
+
+      <section class="page" data-page="7">
+        <div class="card" style="text-align:center">
+          <h2>The Surprise</h2>
+          <p class="lead">Ready for the full show? Press the buttons below in order: <strong>Pop Balloons → Crowd Clap → Cut Cake</strong>.</p>
+
+          <div class="cake" id="cake">
+            <div class="tier">19</div>
+            <div class="tier">Barbie</div>
+            <div class="tier" style="position:relative;display:flex;gap:8px;justify-content:center;align-items:flex-end;flex-direction:column;padding-bottom:8px">
+              <div class="candle" id="candle"><div class="flame" id="flame"></div></div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="btn" id="popBtn">Pop Balloons</button>
+            <button class="btn" id="clapBtn">Crowd Clap</button>
+            <button class="btn" id="cutBtn">Cut Cake</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="balloons" id="balloons"></div>
+      <canvas class="confetti" id="confetti"></canvas>
+
+    </main>
+
+    <footer>
+      <div>Made with ❤️ for Barbie's 19th</div>
+      <div style="opacity:.8">Tap Start → then share the link on WhatsApp</div>
+    </footer>
+  </div>
+
+  <script>
+    // Simple SPA navigation
+    const pages = document.querySelectorAll('.page');
+    document.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click', ()=>{
+      const i = btn.getAttribute('data-page')||btn.dataset.page;
+      showPage(Number(i));
+    }))
+    function showPage(i){pages.forEach(p=>p.classList.toggle('active', p.dataset.page==i))}
+
+    // Start button - enable audio (required on many phones)
+    const startBtn = document.getElementById('startBtn');
+    const bg = document.getElementById('bg-music');
+    startBtn.addEventListener('click', async ()=>{
+      try{ await bg.play(); startBtn.textContent='Surprise is ON 🎶'; startBtn.disabled=true; }
+      catch(e){ startBtn.textContent='Tap again to enable sound'; }
+    })
+
+    // Save simple answers to display later
+    document.getElementById('saveMem').addEventListener('click', ()=>{
+      const val = document.getElementById('mem1').value || 'Our secret memory :)';
+      document.getElementById('a1').textContent = val;
+      alert('Saved — move to other pages!')
+    })
+    document.getElementById('saveFavs').addEventListener('click', ()=>{
+      const c = document.getElementById('favc').value || 'Pink';
+      const s = document.getElementById('favs').value || 'Your fave song';
+      document.getElementById('favColor').textContent=c; document.getElementById('favSong').textContent=s; alert('Saved favorites!')
+    })
+    document.getElementById('saveJoke').addEventListener('click', ()=>{ document.getElementById('a2').textContent = document.getElementById('jokeInput').value || 'Nicknamed!'; alert('Saved!') })
+    document.getElementById('saveDream').addEventListener('click', ()=>{ document.getElementById('a3').textContent = document.getElementById('dream').value || 'Big dreams'; alert('Saved!') })
+
+    // silly pick buttons
+    document.querySelectorAll('[data-val]').forEach(b=>b.addEventListener('click', ()=>{ document.getElementById('a3').textContent=b.dataset.val }))
+    document.querySelectorAll('[data-rf]').forEach(b=>b.addEventListener('click', ()=>{alert('Rapid fire picked: '+b.dataset.rf)}))
+
+    // Balloon generation
+    function spawnBalloons(){
+      const cont = document.getElementById('balloons'); cont.innerHTML='';
+      const colors=['#ffd1dc','#ffb3c6','#ffd5a6','#bde0fe','#c7f9cc']
+      for(let i=0;i<8;i++){const b=document.createElement('div');b.className='balloon';b.style.left=(8+i*11)+'%';b.style.bottom=((i%2)*10+6)+'%';b.style.background=colors[i%colors.length];b.style.animationDelay=(Math.random()*3)+'s';cont.appendChild(b)}
+    }
+    spawnBalloons();
+
+    // Surprise button handlers
+    const clapA = document.getElementById('clap-a');
+    const clapB = document.getElementById('clap-b');
+    const popS = document.getElementById('balloon-pop');
+    const cutS = document.getElementById('cake-cut');
+
+    document.getElementById('popBtn').addEventListener('click', ()=>{
+      // pop sound
+      try{ popS.currentTime=0; popS.play(); }
+      catch(e){}
+      // burst balloon visuals
+      const cont=document.getElementById('balloons');
+      cont.innerHTML='';
+      for(let i=0;i<40;i++){const p=document.createElement('div');p.style.position='absolute';p.style.left=(Math.random()*100)+'%';p.style.top=(Math.random()*100)+'%';p.style.width='8px';p.style.height='8px';p.style.borderRadius='50%';p.style.background=['#ffd1dc','#ffb3c6','#ffd5a6','#bde0fe'][i%4];p.style.opacity=0.95;cont.appendChild(p);setTimeout(()=>p.remove(),2200)}
+    })
+
+    document.getElementById('clapBtn').addEventListener('click', async ()=>{
+      try{ clapA.currentTime=0; clapB.currentTime=0; await clapA.play(); setTimeout(()=>clapB.play(),220); }
+      catch(e){}
+      // make subtle canvas ripple
+      triggerConfetti();
+    })
+
+    document.getElementById('cutBtn').addEventListener('click', ()=>{
+      try{ cutS.currentTime=0; cutS.play(); }
+      catch(e){}
+      // candle flicker and confetti
+      const f = document.getElementById('flame');
+      f.style.transition='transform .15s'; f.style.transform='scale(0.6)'; setTimeout(()=>f.style.transform='scale(1)',150);
+      triggerConfetti(true);
+      // final message popup
+      setTimeout(()=>{
+        const mem = document.getElementById('a1').textContent || 'Our special memory';
+        alert(`Happy 19th, Barbie! 🎉\n\nRemember: ${mem} \n\nLove, your bestie 💖`)
+      },900)
+    })
+
+    // simple confetti function using canvas
+    function triggerConfetti(big){
+      const cvs=document.getElementById('confetti'); const ctx=cvs.getContext('2d'); cvs.width=window.innerWidth; cvs.height=window.innerHeight; const pieces=[];
+      const colors=['#ffd1dc','#ffb3c6','#ffd5a6','#bde0fe','#c7f9cc','#fff3b0'];
+      for(let i=0;i<(big?200:80);i++){pieces.push({x:Math.random()*cvs.width,y:Math.random()*-cvs.height/2,vy:2+Math.random()*4,vx:Math.random()*4-2,color:colors[i%colors.length],size:4+Math.random()*8})}
+      let t=0; function frame(){t++; ctx.clearRect(0,0,cvs.width,cvs.height); for(const p of pieces){p.x+=p.vx; p.y+=p.vy; p.vy+=0.08; ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size,p.size)} if(t<160) requestAnimationFrame(frame); else ctx.clearRect(0,0,cvs.width,cvs.height)
+      }
+      frame();
+    }
+
+    // Accessibility: keyboard navigation
+    document.addEventListener('keydown', e=>{if(e.key==='ArrowRight'){const cur=[...pages].findIndex(p=>p.classList.contains('active')); showPage(Math.min(cur+1,pages.length-1))} if(e.key==='ArrowLeft'){const cur=[...pages].findIndex(p=>p.classList.contains('active')); showPage(Math.max(cur-1,0))}})
+
+    // Small polish: clicking nav buttons also track
+    document.querySelectorAll('nav .btn').forEach(b=>b.addEventListener('click', ()=>{document.querySelectorAll('nav .btn').forEach(x=>x.classList.remove('activeNav'));b.classList.add('activeNav')}))
+
+  </script>
+</body>
+</html>
