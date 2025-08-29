@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Happy Birthday Barbie!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Gradient background and page border -->
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5a9b8 0%, #ffd6ec 100%);
+            transition: background 1s;
+            border: 18px solid #ffd6ec;
+        }
+        .page {
+            display: none;
+            max-width: 400px;
+            width: 90vw;
+            min-height: 70vh;
+            background: rgba(255,255,255,0.82);
+            border-radius: 22px;
+            box-shadow: 0 6px 48px rgba(173,60,190,0.2);
+            padding: 3vw 6vw 5vw 6vw;
+            position: relative;
+            animation: fadeIn 0.8s;
+        }
+        .visible {display:block;}
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 22px;
+            text-align:center;
+        }
+        .options, .inputBox, .response, .celebrate, .cake-anim, .end-msg {
+            margin: 22px 0; text-align:center;
+        }
+        .bottom {
+            position: absolute; bottom: 7px; left: 10px; font-size: 1em; opacity:.82;
+            font-family: 'Segoe UI', emoji;
+        }
+        button, .emoji, input[type=text] {
+            margin:10px; padding:7px 18px; font-size:1.05em; border-radius:10px;
+            border:none; outline:none; background:linear-gradient(90deg,#e66485,#fcc6d1 92%);
+            color: #830070; transition:.22s; cursor:pointer;
+        }
+        button:hover {background:linear-gradient(270deg,#fcc6d1,#e66485 92%);}
+        @keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
+        /* Heart/pulse animation */
+        .heart {animation: pulse 0.8s infinite;}
+        @keyframes pulse {
+            0% {transform: scale(1);}
+            70% {transform: scale(1.23);}
+            100% {transform: scale(1);}
+        }
+        /* Sad, wrong and celebration emoji */
+        .sad {animation: shake 0.6s infinite;}
+        @keyframes shake {0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 80%{transform:translateX(8px);}}
+        .border {border:2px solid #830070; padding:10px; border-radius:18px; margin-bottom:10px;}
+        /* Balloon/cake animations */
+        .balloon {width:38px;vertical-align:middle; animation: up 2s infinite alternate;}
+        @keyframes up {from{transform:translateY(0);} to{transform:translateY(-26px);}}
+        .cake {display:inline-block;}
+        .knife {width:50px;cursor:move;}
+        #knife {
+            width: 80px !important;
+            position: absolute;
+            left: 160px !important;
+            top: 70px !important;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+        .cake-anim div {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Birthday music and sound Fx -->
+    <audio id="sound-birthday" src="https://cdn.pixabay.com/audio/2022/10/16/audio_125b125d9b.mp3" loop></audio>
+    <audio id="sound-clap" src="https://cdn.pixabay.com/audio/2023/03/23/audio_128619db12.mp3"></audio>
+    <audio id="sound-balloon" src="https://cdn.pixabay.com/audio/2022/05/25/audio_1230fa3b97.mp3"></audio>
+
+    <!-- Pages -->
+    <div class="page visible" id="page1">
+        <div class="border">
+            <h2>🎉 Happy 20th Birthday Barbie! 🎉</h2>
+            <div class="celebrate">
+                <img src="https://img.icons8.com/emoji/96/000000/birthday-cake-emoji.png" class="cake" alt="cake">
+                <img src="https://img.icons8.com/emoji/48/000000/balloon-emoji.png" class="balloon">
+                <img src="https://img.icons8.com/color/48/000000/party-balloons.png" class="balloon">
+            </div>
+            <p class="question">May all your dreams come true!</p>
+            <button onclick="nextPage(2)">Start Birthday Surprise</button>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page2">
+        <div class="border">
+            <p class="question">Q1) Are you excited for your birthday?</p>
+            <div class="options">
+                <button onclick="answerQ1('yes')">Yes</button>
+                <button onclick="answerQ1('no')">No</button>
+            </div>
+            <div id="q1response"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page3">
+        <div class="border">
+            <p class="question">Q2) What is your favourite food?</p>
+            <div class="options">
+                <button onclick="answerQ2('dosa')">Dosa</button>
+                <button onclick="answerQ2('vadapav')">Vada Pav</button>
+            </div>
+            <div id="q2response"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page4">
+        <div class="border">
+            <p class="question">Q3) Who would you be missing on this birthday?</p>
+            <div class="inputBox"><input type="text" id="missAnswer" placeholder="Type your answer"></div>
+            <button onclick="answerQ3()">Next</button>
+            <div id="q3response"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page5">
+        <div class="border">
+            <p class="question">Q4) How many years are you turning to be?</p>
+            <div class="options">
+                <button onclick="answerQ4('20')">20</button>
+                <button onclick="answerQ4('18')">18</button>
+            </div>
+            <div id="q4response"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page6">
+        <div class="border">
+            <p class="question">Q5) Which gift would you prefer?</p>
+            <div class="inputBox"><input type="text" id="giftAnswer" placeholder="Type your answer"></div>
+            <button onclick="answerQ5()">Next</button>
+            <div id="q5response"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page7">
+        <div class="border">
+            <p class="question">Q6) Do you wanna cut the cake?</p>
+            <div class="options">
+                <button onclick="answerQ6('yes')">Yes</button>
+                <button onclick="answerQ6('no')">No</button>
+            </div>
+            <div id="q6response"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page8">
+        <div class="border">
+            <h2>Celebration Time! 🎊</h2>
+            <div class="cake-anim">
+                <div>
+                    <img src="https://img.icons8.com/emoji/192/000000/birthday-cake-emoji.png" id="big-cake" class="cake" alt="Cake Emoji">
+                    <img src="https://img.icons8.com/plasticine/96/knife.png" id="knife" draggable="true" alt="Knife">
+                </div>
+                <p>Drag the knife on the cake to cut!</p>
+            </div>
+            <div id="cutResponse"></div>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <div class="page" id="page9">
+        <div class="border end-msg">
+            <h2>From your BFF ❤️<br>Enjoy your day Barbie!</h2>
+            <div class="celebrate">
+                <img src="https://img.icons8.com/emoji/192/000000/birthday-cake-emoji.png" class="cake">
+                <img src="https://img.icons8.com/emoji/48/000000/balloon-emoji.png" class="balloon">
+                <img src="https://img.icons8.com/color/48/000000/party-balloons.png" class="balloon">
+            </div>
+            <p style="font-size:1.3em;">Love and hugs from your BFF! 🦁</p>
+            <button onclick="savePage()">Save this page</button>
+        </div>
+        <div class="bottom">made with ❤️ by 🦁</div>
+    </div>
+
+    <script>
+        // Play birthday music on load
+        window.onload = () => {document.getElementById('sound-birthday').play();}
+        let currentPage = 1;
+
+        // Enhanced sweet female voice speaking function with better tuning
+        function speak(text) {
+            const synth = window.speechSynthesis;
+            if (synth.speaking) {
+                synth.cancel(); // cancel any ongoing speaking to avoid overlap
+            }
+            const utter = new SpeechSynthesisUtterance(text);
+            // Try to select a sweet young female voice from available list
+            let voices = synth.getVoices().filter(v => v.lang.startsWith('en') && v.gender !== 'male');
+            if(!voices.length) voices = synth.getVoices(); // fallback all voices if none found
+
+            // Pick first female or fallback
+            utter.voice = voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira')) || voices[0];
+            utter.pitch = 1.3;    // slightly higher pitch for sweet tone
+            utter.rate = 1.0;     // natural speaking rate
+            utter.volume = 1.0;   // full volume
+            synth.speak(utter);
+        }
+
+        function showPage(n) {
+            for(let i=1;i<=9;i++) document.getElementById('page'+i).classList.remove('visible');
+            document.getElementById('page'+n).classList.add('visible');
+            currentPage = n;
+        }
+        function nextPage(n){ showPage(n); }
+        // Q1
+        function answerQ1(ans) {
+            if(ans==='yes'){
+                document.getElementById('q1response').innerHTML='<span class="emoji heart" style="font-size:2.4em;color:#ff3a6a;">💓</span>';
+                nextPage(3); speak('Great! Let’s move ahead.');
+            } else {
+                document.getElementById('q1response').innerHTML='<span class="emoji sad" style="font-size:2.4em;color:#999;">😔</span><br>Oh no... Let\'s get you excited before moving ahead!';
+                speak('Come on Barbie, let’s have fun!'); // Stay on page
+            }
+        }
+        function answerQ2(ans){
+            if(ans==='dosa'){
+                document.getElementById('q2response').innerHTML='<span class="emoji heart" style="font-size:2.4em;color:#e30038;">❤️</span>';
+            }else{
+                document.getElementById('q2response').innerHTML='<span class="emoji heart" style="font-size:2.4em;color:#ffed00;">💛</span>';
+            }
+            nextPage(4); speak('Yummy! Let’s continue.');
+        }
+        function answerQ3(){
+            let val = document.getElementById('missAnswer').value || '';
+            if(val.trim().length > 0){
+                document.getElementById('q3response').innerHTML = Array(3).fill('<span class="emoji heart" style="font-size:1.5em;color:#fe377a;">❤️</span>').join(' ');
+            }
+            nextPage(5); speak('Noted! Everyone around you loves you!');
+        }
+        function answerQ4(ans){
+            if(ans==='20'){
+                document.getElementById('q4response').innerHTML='<span class="emoji heart" style="font-size:2.4em;color:#ff2ebd;">💖</span>';
+                nextPage(6); speak('Correct! Welcome to your 20th birthday!');
+            } else {
+                document.getElementById('q4response').innerHTML='<span class="emoji sad" style="font-size:2.4em;color:#bb222a;">❌</span> Wrong!';
+                speak('Oops, wrong! Try again!');
+            }
+        }
+        function answerQ5(){
+            let val = document.getElementById('giftAnswer').value.trim();
+            if(val.length > 0){
+                document.getElementById('q5response').innerHTML='You will get it soon! <span class="emoji heart" style="font-size:2em;color:#fe377a;">💖</span>';
+                nextPage(7); speak('Hope you like surprises!');
+            }
+        }
+        function answerQ6(ans){
+            if(ans==='yes'){
+                nextPage(8); speak('Let’s cut the cake together!');
+            } else {
+                document.getElementById('q6response').innerHTML='"You will have to cut" 😄';
+                setTimeout(()=>{nextPage(8);speak('Let’s cut the cake together!');},2000);
+            }
+        }
+        // Cake cutting interaction and sound logic
+        let cakeCut = false;
+        const knife = document.getElementById('knife');
+        const bigCake = document.getElementById('big-cake');
+        const cutResponse = document.getElementById('cutResponse');
+        const clapSound = document.getElementById('sound-clap');
+        const balloonSound = document.getElementById('sound-balloon');
+
+        knife.addEventListener('dragstart', e => {
+            e.dataTransfer.setData('text/plain', 'cake');
+        });
+
+        bigCake.addEventListener('dragover', e => {
+            e.preventDefault();
+        });
+
+        bigCake.addEventListener('drop', e => {
+            e.preventDefault();
+            if (!cakeCut) {
+                cakeCut = true;
+
+                cutResponse.innerHTML = "<span class='emoji heart' style='font-size:3em;color:#ff1493;'>🎉</span><br/>Cake cut!";
+
+                // Start clapping loop sound continuously while cake is cut
+                clapSound.loop = true;
+                clapSound.play();
+
+                // After 3 seconds of clapping, play balloon sound and move to last page
+                setTimeout(() => {
+                    clapSound.pause();
+                    balloonSound.play();
+                    nextPage(9);
+                    speak('Congratulations Barbie! Enjoy your special day');
+                }, 3500);
+            }
+        });
+
+        // Save page function
+        function savePage(){
+            let el = document.createElement('a');
+            let html = document.documentElement.outerHTML;
+            let file = new Blob([html], {type: 'text/html'});
+            el.href = URL.createObjectURL(file);
+            el.download = "Barbie_Birthday.html";
+            el.click();
+        }
+    </script>
+</body>
+</html>
